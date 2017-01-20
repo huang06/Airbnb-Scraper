@@ -1,4 +1,4 @@
-# crawl_user_nationality.py
+# crawler_user_nationality.py
 <H3>thefile = open('C:/Users/Dormitory/Desktop/test.txt', 'a+')</H3>  
 The for-loop crawls the nationalities based on the user_id containing in test.txt.  
 <H3>time.sleep(5)</H3>  
