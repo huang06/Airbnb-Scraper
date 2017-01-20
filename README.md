@@ -4,8 +4,6 @@
 <H3>thefile = open('C:/Users/Dormitory/Desktop/test.txt', 'a+')</H3>  
 The for-loop crawls the nationalities based on the user_id containing in test.txt.  
 <H3>time.sleep(5)</H3>  
-Set the delay tiem to prevent getting blacklisted in the for-loop.  
-
-  
+Set the delay tiem in the for-loop to prevent getting blacklisted.  
 <H2>final.csv</H2>  
 example of user_id and nationality from user's profile whose reviews listed on Airbnb in NY.
