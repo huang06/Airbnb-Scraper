@@ -1,3 +1,4 @@
+The repository is for master's thesis.  
 # crawler_user_nationality.py
 <H3>thefile = open('C:/Users/Dormitory/Desktop/test.txt', 'a+')</H3>  
 The for-loop crawls the nationalities based on the user_id stored in test.txt.  
