@@ -35,5 +35,5 @@ user_profile = pd.DataFrame(columns)
 user_profile['links_from_host'] = \
             user_profile['links_from_host'].map(lambda x: x.strip('\\\" /users/show/ '))
 print(user_profile['links_from_host'])
-# Print the URL list of hosts on which the user has comment on
+# Print the URL list of hosts on which the user has comment
 print('https://www.airbnb.com.tw/users/show/'+user_profile['links_from_host'])
