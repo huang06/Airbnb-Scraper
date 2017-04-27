@@ -17,17 +17,20 @@ type(a)
 user_list=user_list.set_index("user_id")
 type(user_list.loc[user_list['user_id'] == 113304043]['host_id'])
         
+uniq = list(set(reviews_raw['reviewer_id'].values.tolist()))
+len(uniq)
+
 """
 建立user_id
 """
 reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/Dormitory/Desktop/reviews.csv'))
-
 df = pd.DataFrame(columns=['user_id','host_id','count'])
-df['user_id'] = reviews_raw['reviewer_id'].values.tolist() 
+#To uniquify host_id in dataset of reviews
+df['user_id'] = list(set(reviews_raw['reviewer_id'].values.tolist()))
 df=df.set_index("user_id")
 df['host_id'] = [[] for _ in range(len(df))]
 df['count'] = [0 for _ in range(len(df))]
-user_list = df.copy().head(10)
+user_list = df.copy()
 
 """
 準備Scraper
