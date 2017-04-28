@@ -26,7 +26,7 @@ user_list.index.get_loc(index)
 建立user_id清單，並把user_id設為index
     移除掉重複的user_id : 646717 -> 570681
 """
-reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/lab-jack/Desktop/repositories/reviews.csv'))
+reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/race020/Desktop/repository/reviews.csv'))
 
 df = pd.DataFrame(columns=['user_id','host_id','count'])
 df['user_id'] = reviews_raw['reviewer_id'].values.tolist() 
@@ -41,7 +41,7 @@ df = df.sort_index()
 """
 選適合的 copy
 """
-user_list = df.iloc[0:10000].copy()
+user_list = df.iloc[10001:20000].copy()
 
 #user_list = df.iloc[0:50000].copy()
 #user_list = df.iloc[50001:100000].copy()
@@ -104,8 +104,9 @@ for index, row in user_list.iterrows():
   
   except (KeyboardInterrupt, SystemExit):
       print('xxxxxxxxxxxxxxxxxx')
+      user_list.to_csv('total.csv',index=True)
       raise
-      
+user_list.to_csv('total.csv',index=True)      
 tEnd = time.time()#計時結束
 print( "It cost %f sec" % (tEnd - tStart) )#會自動做近位
 print( tEnd - tStart )#原型長這樣
