@@ -41,7 +41,7 @@ df = df.sort_index()
 """
 選適合的 copy
 """
-user_list = df.iloc[10001:20000].copy()
+user_list = df.iloc[20001:30000].copy()
 
 #user_list = df.iloc[0:50000].copy()
 #user_list = df.iloc[50001:100000].copy()
