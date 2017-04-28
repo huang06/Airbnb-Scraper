@@ -10,32 +10,38 @@ import pandas as pd
 import re
 
 """
-測試區
+目前用不到的Code
 """
 a = [0, 1, 2, 3]
 type(a)
-user_list=user_list.set_index("user_id")
 type(user_list.loc[user_list['user_id'] == 113304043]['host_id'])
 user_list.loc[113304043, "host_id"] = user_profile['links_from_host'].values.tolist()
-reviews_raw['reviewer_id'].head(10).values.tolist()  
+# 增加 value 到現有的 list 用 extend ; 增加 list 到現有的 list 用 append
 user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)
+# 找目標 index 在 DataFrame 裡排序位置
 user_list.index.get_loc(index)
 
 """
-建立user_id
+建立user_id清單，並把user_id設為index
+    移除掉重複的user_id : 646717 -> 570681
 """
-reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/Dormitory/Desktop/reviews.csv'))
+reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/Dormitory/Desktop/repositories/reviews.csv'))
 
-# total :646717 -> 570681
 df = pd.DataFrame(columns=['user_id','host_id','count'])
 df['user_id'] = reviews_raw['reviewer_id'].values.tolist() 
 df = df.drop_duplicates()
 df=df.set_index("user_id")
+# 預設 host_id 為 empty list
 df['host_id'] = [[] for _ in range(len(df))]
+# 預設 count 為 int
 df['count'] = [0 for _ in range(len(df))]
 df = df.sort_index()
 
+"""
+選適合的 copy
+"""
 user_list = df.iloc[0:5].copy()
+
 user_list = df.iloc[0:50000].copy()
 user_list = df.iloc[50001:100000].copy()
 user_list = df.iloc[100001:150000].copy()
@@ -44,7 +50,7 @@ print(df.index.get_loc(220493))
 
 
 """
-準備Scraper
+Scraper Go!
 """
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -84,9 +90,7 @@ for index, row in user_list.iterrows():
             if (len(user_profile)==0):
                 break
             
-            """
-            匯入 host_id
-            """
+            #host_id 匯入
             print('要加入的list'+str(user_profile['links_from_host'].values.tolist()))
             user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)            
             user_list.loc[index, 'count'] += len(user_profile)
