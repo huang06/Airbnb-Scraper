@@ -41,7 +41,7 @@ df = df.sort_index()
 """
 選適合的 copy
 """
-user_list = df.iloc[0:100].copy()
+user_list = df.iloc[0:10000].copy()
 
 #user_list = df.iloc[0:50000].copy()
 #user_list = df.iloc[50001:100000].copy()
@@ -57,8 +57,13 @@ tStart = time.time()#計時開始
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 for index, row in user_list.iterrows():
+  #因為 index 從 0 開始，所以 current + 1 
+  current = user_list.index.get_loc(index)+1
+  print(' 進度:'+ str(current) + ' / ' + str(len(user_list)))                                   
+  if ( current%500==0 ) :
+      user_list.to_csv(str(current)+'.csv',index=True)    
   try:
-      for page in range(1,20): #比起設do-while還能控制流程
+      for page in range(1,10): #比起設do-while還能控制流程
             """
             爬網頁內容
             """
@@ -85,7 +90,7 @@ for index, row in user_list.iterrows():
             #print(user_profile['links_from_host'])
             #print('https://www.airbnb.com.tw/users/show/'+user_profile['links_from_host'])
             
-            print(' 進度:'+ str(user_list.index.get_loc(index)) + ' / ' + str(len(user_list)))
+            #print(' 進度:'+ str(user_list.index.get_loc(index)) + ' / ' + str(len(user_list)))
             #print('目前第'+str(page)+'頁 '+'user_profile的長度:'+str(len(user_profile))) 
             
             #離開page-loop條件
@@ -96,12 +101,10 @@ for index, row in user_list.iterrows():
             #print('要加入的list'+str(user_profile['links_from_host'].values.tolist()))
             user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)            
             user_list.loc[index, 'count'] += len(user_profile)
-            
-            current = user_list.index.get_loc(index)+1
-            if ( current%50==0 ) :
-                user_list.to_csv(str(current)+'.csv',index=True)
-  except:
+  
+  except (KeyboardInterrupt, SystemExit):
       print('xxxxxxxxxxxxxxxxxx')
+      raise
       
 tEnd = time.time()#計時結束
 print( "It cost %f sec" % (tEnd - tStart) )#會自動做近位
