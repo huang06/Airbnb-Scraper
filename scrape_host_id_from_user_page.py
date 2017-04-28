@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Apr 18 15:25:00 2017
-@author: race020
+@author: Dormitory
 """
 
 import requests
@@ -10,40 +10,52 @@ import pandas as pd
 import re
 
 """
-測試用
+測試區
 """
 a = [0, 1, 2, 3]
 type(a)
 user_list=user_list.set_index("user_id")
 type(user_list.loc[user_list['user_id'] == 113304043]['host_id'])
-        
-uniq = list(set(reviews_raw['reviewer_id'].values.tolist()))
-len(uniq)
+user_list.loc[113304043, "host_id"] = user_profile['links_from_host'].values.tolist()
+reviews_raw['reviewer_id'].head(10).values.tolist()  
+user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)
+user_list.index.get_loc(index)
 
 """
 建立user_id
 """
 reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/Dormitory/Desktop/reviews.csv'))
+
+# total :646717 -> 570681
 df = pd.DataFrame(columns=['user_id','host_id','count'])
-#To uniquify host_id in dataset of reviews
-df['user_id'] = list(set(reviews_raw['reviewer_id'].values.tolist()))
+df['user_id'] = reviews_raw['reviewer_id'].values.tolist() 
+df = df.drop_duplicates()
 df=df.set_index("user_id")
 df['host_id'] = [[] for _ in range(len(df))]
 df['count'] = [0 for _ in range(len(df))]
-user_list = df.copy()
+df = df.sort_index()
+
+user_list = df.iloc[0:5].copy()
+user_list = df.iloc[0:50000].copy()
+user_list = df.iloc[50001:100000].copy()
+user_list = df.iloc[100001:150000].copy()
+user_list = df.iloc[150001:200000].copy()
+print(df.index.get_loc(220493))
+
 
 """
 準備Scraper
 """
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+
 for index, row in user_list.iterrows():
-  for page in range(1,100): #比起設do-while還能控制流程
-    try:
+  try:
+      for page in range(1,20): #比起設do-while還能控制流程
             """
             爬網頁內容
             """
-            print('Following content of URL will be scraped : ')
-            print('https://www.airbnb.com.tw/users/review_page/'+str(index)+'?page='+str(page)+'&role=guest')
+            #print('Following content of URL will be scraped : ')
+            #print('https://www.airbnb.com.tw/users/review_page/'+str(index)+'?page='+str(page)+'&role=guest')
             res = requests.get('https://www.airbnb.com.tw/users/review_page/'+str(index)+'?page='+str(page)+'&role=guest',headers=headers)
             soup = BeautifulSoup(res.text,"lxml")
             #print(soup)
@@ -62,15 +74,21 @@ for index, row in user_list.iterrows():
             user_profile = pd.DataFrame(columns)
             user_profile['links_from_host'] = \
                         user_profile['links_from_host'].map(lambda x: x.strip('\\\" /users/show/ '))
-            print(user_profile['links_from_host'])
+            #print(user_profile['links_from_host'])
             #print('https://www.airbnb.com.tw/users/show/'+user_profile['links_from_host'])
+            
+            print(' 進度:'+ str(user_list.index.get_loc(index)) + ' / ' + str(len(user_list)))
             print('目前第'+str(page)+'頁 '+'user_profile的長度:'+str(len(user_profile))) 
+            
             #離開page-loop條件
             if (len(user_profile)==0):
                 break
+            
+            """
+            匯入 host_id
+            """
             print('要加入的list'+str(user_profile['links_from_host'].values.tolist()))
-            user_list.loc[index, 'host_id'] += user_profile['links_from_host'].values.tolist()          
-    except:
-        print('xxxxxxxxxxxxxxxxxx')
-        page+=1
-        #continue
+            user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)            
+            user_list.loc[index, 'count'] += len(user_profile)
+  except:
+      print('xxxxxxxxxxxxxxxxxx')
