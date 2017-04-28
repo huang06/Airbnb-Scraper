@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import re
+import time
 
 """
 目前用不到的Code
@@ -25,7 +26,7 @@ user_list.index.get_loc(index)
 建立user_id清單，並把user_id設為index
     移除掉重複的user_id : 646717 -> 570681
 """
-reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/Dormitory/Desktop/repositories/reviews.csv'))
+reviews_raw = pd.DataFrame(pd.read_csv('C:/Users/lab-jack/Desktop/repositories/reviews.csv'))
 
 df = pd.DataFrame(columns=['user_id','host_id','count'])
 df['user_id'] = reviews_raw['reviewer_id'].values.tolist() 
@@ -40,18 +41,19 @@ df = df.sort_index()
 """
 選適合的 copy
 """
-user_list = df.iloc[0:5].copy()
+user_list = df.iloc[0:100].copy()
 
-user_list = df.iloc[0:50000].copy()
-user_list = df.iloc[50001:100000].copy()
-user_list = df.iloc[100001:150000].copy()
-user_list = df.iloc[150001:200000].copy()
-print(df.index.get_loc(220493))
+#user_list = df.iloc[0:50000].copy()
+#user_list = df.iloc[50001:100000].copy()
+#user_list = df.iloc[100001:150000].copy()
+#user_list = df.iloc[150001:200000].copy()
+#print(df.index.get_loc(220493))
 
 
 """
 Scraper Go!
 """
+tStart = time.time()#計時開始
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
 for index, row in user_list.iterrows():
@@ -84,15 +86,23 @@ for index, row in user_list.iterrows():
             #print('https://www.airbnb.com.tw/users/show/'+user_profile['links_from_host'])
             
             print(' 進度:'+ str(user_list.index.get_loc(index)) + ' / ' + str(len(user_list)))
-            print('目前第'+str(page)+'頁 '+'user_profile的長度:'+str(len(user_profile))) 
+            #print('目前第'+str(page)+'頁 '+'user_profile的長度:'+str(len(user_profile))) 
             
             #離開page-loop條件
             if (len(user_profile)==0):
                 break
             
             #host_id 匯入
-            print('要加入的list'+str(user_profile['links_from_host'].values.tolist()))
+            #print('要加入的list'+str(user_profile['links_from_host'].values.tolist()))
             user_list.loc[index, 'host_id'].extend(user_profile['links_from_host'].values)            
             user_list.loc[index, 'count'] += len(user_profile)
+            
+            current = user_list.index.get_loc(index)+1
+            if ( current%50==0 ) :
+                user_list.to_csv(str(current)+'.csv',index=True)
   except:
       print('xxxxxxxxxxxxxxxxxx')
+      
+tEnd = time.time()#計時結束
+print( "It cost %f sec" % (tEnd - tStart) )#會自動做近位
+print( tEnd - tStart )#原型長這樣
